@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ストループ課題（反応時間付き）</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 80px;
+    }
+    #word {
+      font-size: 60px;
+      font-weight: bold;
+      margin: 40px;
+    }
+    .color-button {
+      padding: 12px 24px;
+      margin: 10px;
+      font-size: 20px;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>ストループ課題（色選択・反応時間計測）</h1>
+<div id="word">開始ボタンを押してください</div>
+
+<div id="buttons" style="margin-bottom: 20px;">
+  <button class="color-button" style="background-color: red;" onclick="checkAnswer('red')">赤</button>
+  <button class="color-button" style="background-color: blue;" onclick="checkAnswer('blue')">青</button>
+  <button class="color-button" style="background-color: green;" onclick="checkAnswer('green')">緑</button>
+  <button class="color-button" style="background-color: orange;" onclick="checkAnswer('orange')">黄</button>
+</div>
+
+<button onclick="startTest()">テスト開始</button>
+
+<p id="result"></p>
+<p id="reactionTime"></p>
+
+<script>
+  const colors = ["赤", "青", "緑", "黄"];
+  const colorMap = {
+    "赤": "red",
+    "青": "blue",
+    "緑": "green",
+    "黄": "orange"
+  };
+  const reverseColorMap = {
+    "red": "赤",
+    "blue": "青",
+    "green": "緑",
+    "orange": "黄"
+  };
+
+  let currentCorrectColor = "";
+  let startTime = 0;
+  let trial = 0;
+  let correct = 0;
+  const totalTrials = 20;
+  let reactionTimes = [];
+
+  function startTest() {
+    trial = 0;
+    correct = 0;
+    reactionTimes = [];
+    document.getElementById("result").textContent = "";
+    document.getElementById("reactionTime").textContent = "";
+    nextWord();
+  }
+
+  function nextWord() {
+    if (trial >= totalTrials) {
+      endTest();
+      return;
+    }
+
+    trial++;
+
+    const word = colors[Math.floor(Math.random() * colors.length)];
+    let fontColor;
+    do {
+      fontColor = colors[Math.floor(Math.random() * colors.length)];
+    } while (fontColor === word); // 不一致にする
+
+    currentCorrectColor = colorMap[fontColor];
+    const wordDiv = document.getElementById("word");
+    wordDiv.textContent = word;
+    wordDiv.style.color = currentCorrectColor;
+
+    startTime = performance.now(); // 反応時間スタート
+  }
+
+  function checkAnswer(selectedColor) {
+    const endTime = performance.now();
+    const reactionTime = endTime - startTime;
+    reactionTimes.push(reactionTime);
+
+    if (selectedColor === word) {
+      correct++;
+    }
+
+    nextWord();
+  }
+
+  function endTest() {
+    const avgRT = (reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length).toFixed(1);
+    document.getElementById("word").textContent = "終了！";
+    document.getElementById("result").textContent = `正解数: ${correct} / ${totalTrials}`;
+    document.getElementById("reactionTime").textContent = `平均反応時間: ${avgRT} ミリ秒`;
+  }
+</script>
+
+</body>
+</html>
