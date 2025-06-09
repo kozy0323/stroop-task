@@ -63,7 +63,7 @@
   let correct = 0;
   const totalTrials = 20;
   let reactionTimes = [];
-
+  var word;
   function startTest() {
     trial = 0;
     correct = 0;
@@ -81,7 +81,7 @@
 
     trial++;
 
-    const word = colors[Math.floor(Math.random() * colors.length)];
+    word = colors[Math.floor(Math.random() * colors.length)];
     let fontColor;
     do {
       fontColor = colors[Math.floor(Math.random() * colors.length)];
@@ -99,9 +99,13 @@
     const endTime = performance.now();
     const reactionTime = endTime - startTime;
     reactionTimes.push(reactionTime);
-
-    if (selectedColor === word) {
+    console.log(word)
+    console.log(selectedColor)
+    if (selectedColor === colorMap[word]) {
       correct++;
+      console.log(word);
+      console.log(selectedColor);
+      
     }
 
     nextWord();
